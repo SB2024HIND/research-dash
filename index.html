@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scenario Visualization Dashboard</title>
+
+  <!-- Load PyScript -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.1.1/pyscript.css" />
+  <script defer src="https://pyscript.net/releases/2025.1.1/pyscript.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Scenario Visualization Dashboard</h1>
+    <nav><a href="index.html">← Back to Homepage</a></nav>
+  </header>
+
+  <section>
+    <h2>Test Plot (Sine Wave)</h2>
+    <p>If PyScript works, you should see a sine wave plot below:</p>
+
+    <py-script>
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Generate sine wave
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.plot(x, y, color="teal", linewidth=2, marker="o")
+plt.title("Hello from PyScript + Matplotlib")
+plt.xlabel("X Axis")
+plt.ylabel("Y = sin(x)")
+plt.grid(True, linestyle="--", alpha=0.6)
+plt.show()
+    </py-script>
+  </section>
+</body>
+</html>
