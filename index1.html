@@ -1,67 +1,63 @@
-from PIL import Image
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grouped Horizontal Bar Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      max-width: 1000px;
+      margin: 2em auto;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      max-height: 2000px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Grouped Horizontal Bar Chart (35 Points)</h2>
+  <canvas id="barChart"></canvas>
 
-# Load the images
-img1 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-1.png")  # (a)
-img2 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-2.png")  # (b)
-img3 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-3.png")  # (c)
-img4 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-4.png")  # (d)
-img5 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-5.png")  # (e)
-img6 = Image.open("C:/Users/My_Account/.spyder-py3/Projekts/Plots-PCF-U/PCF-U-6.png")  # (f)
+  <script>
+    const labels = Array.from({length: 35}, (_, i) => `Point ${i + 1}`);
+    const series1 = Array.from({length: 35}, () => Math.floor(Math.random() * 10) + 5);
+    const series2 = Array.from({length: 35}, () => Math.floor(Math.random() * 10) + 5);
 
-# Create figure with GridSpec (4 rows, 2 cols)
+    const data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Series 1',
+          data: series1,
+          backgroundColor: 'blue'
+        },
+        {
+          label: 'Series 2',
+          data: series2,
+          backgroundColor: 'green'
+        }
+      ]
+    };
 
-# Create a matplotlib figure
-fig, axes = plt.subplots(2, 3, figsize=(27,12))
-axes = axes.flatten()
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        indexAxis: 'y',  // <!-- Make bars horizontal-->
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
 
-# Show each image in a subplot
-axes[0].imshow(img1)
-axes[0].axis("off")
-axes[0].set_title("(g)", loc="left", fontsize=14, fontweight="bold")
-
-axes[1].imshow(img2)
-axes[1].axis("off")
-axes[1].set_title("(h)", loc="left", fontsize=14, fontweight="bold")
-
-axes[2].imshow(img3)
-axes[2].axis("off")
-axes[2].set_title("(i)", loc="left", fontsize=14, fontweight="bold")
-
-axes[3].imshow(img4)
-axes[3].axis("off")
-axes[3].set_title("(j)", loc="left", fontsize=14, fontweight="bold")
-
-axes[4].imshow(img5)
-axes[4].axis("off")
-axes[4].set_title("(k)", loc="left", fontsize=14, fontweight="bold")
-
-axes[5].imshow(img6)
-axes[5].axis("off")
-axes[5].set_title("(l)", loc="left", fontsize=14, fontweight="bold")
-
-# Hide the empty 4th subplot
-#axes[6].axis("off")
-
-
-# Place first six images normally
-#axes = []
-#labels = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"]
-#images = [img1, img2, img3, img4, img5, img6]
-
-#for i, (img, lbl) in enumerate(zip(images, labels)):
-#    ax = fig.add_subplot(gs[i // 2, i % 2])
-#    ax.imshow(img)
-#    ax.axis("off")
- #   ax.set_title(lbl, loc="left", fontsize=14, fontweight="bold")
-#    axes.append(ax)
-
-# Last image spans both columns (centered)
-#ax_last = fig.add_subplot(gs[3, :])  # row 3, all columns
-#ax_last.imshow(img7)
-#ax_last.axis("off")
-#ax_last.set_title("(g)", loc="left", fontsize=14, fontweight="bold")
-
-plt.tight_layout()
-plt.show()
+    new Chart(
+      document.getElementById('barChart'),
+      config
+    );
+  </script>
+</body>
+</html>
