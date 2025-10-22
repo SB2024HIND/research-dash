@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dumbell Plot with D3.js</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart {
+            margin: 20px 0;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        button {
+            margin: 0 5px;
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dumbell Plot with D3.js</h1>
+        <div class="controls">
+            <button onclick="createChart()">Refresh Chart</button>
+        </div>
+        <div id="chart" class="chart"></div>
+    </div>
+
+    <script>
+        function createChart() {
+            // Clear previous chart
+            d3.select("#chart").html("");
+
+            // Set up dimensions
+            const margin = {top: 50, right: 100, bottom: 50, left: 150};
+            const width = 1000 - margin.left - margin.right;
+            const height = 800 - margin.top - margin.bottom;
+
+            // Create SVG
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Generate data
+            const categories = Array.from({length: 35}, (_, i) => `Cat ${i + 1}`);
+            const data = categories.map((category, i) => ({
+                category,
+                values: [
+                    {name: 'Y1', value: Math.random() * 20 + 10},
+                    {name: 'Y2', value: Math.random() * 20 + 15},
+                    {name: 'Y3', value: Math.random() * 20 + 20},
+                    {name: 'Y4', value: Math.random() * 20 + 25}
+                ]
+            }));
+
+            // Scales
+            const xScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d3.max(d.values, v => v.value))])
+                .range([0, width]);
+
+            const yScale = d3.scaleBand()
+                .domain(categories)
+                .range([0, height])
+                .padding(0.3);
+
+            // Colors
+            const colors = d3.scaleOrdinal()
+                .domain(['Y1', 'Y2', 'Y3', 'Y4'])
+                .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']);
+
+            // Add connecting lines
+            data.forEach(d => {
+                const yPos = yScale(d.category) + yScale.bandwidth() / 2;
+                const sortedValues = [...d.values].sort((a, b) => a.value - b.value);
+                
+                svg.append("line")
+                    .attr("x1", xScale(sortedValues[0].value))
+                    .attr("x2", xScale(sortedValues[3].value))
+                    .attr("y1", yPos)
+                    .attr("y2", yPos)
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 2);
+            });
+
+            // Add points
+            data.forEach(d => {
+                const yPos = yScale(d.category) + yScale.bandwidth() / 2;
+                
+                d.values.forEach((v, i) => {
+                    svg.append("circle")
+                        .attr("cx", xScale(v.value))
+                        .attr("cy", yPos)
+                        .attr("r", 6)
+                        .attr("fill", colors(v.name))
+                        .attr("stroke", "#fff")
+                        .attr("stroke-width", 1)
+                        .append("title")
+                        .text(`${d.category} - ${v.name}: ${v.value.toFixed(2)}`);
+                });
+            });
+
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(xScale));
+
+            svg.append("g")
+                .call(d3.axisLeft(yScale));
+
+            // Add labels
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("X Categories");
+
+            svg.append("text")
+                .attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
+                .style("text-anchor", "middle")
+                .text("Y Values");
+
+            // Add legend
+            const legend = svg.selectAll(".legend")
+                .data(['Y1', 'Y2', 'Y3', 'Y4'])
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", (d, i) => `translate(${width + 20}, ${i * 25})`);
+
+            legend.append("rect")
+                .attr("x", 0)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", colors);
+
+            legend.append("text")
+                .attr("x", 25)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "start")
+                .text(d => d);
+        }
+
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', createChart);
+    </script>
+</body>
+</html>
